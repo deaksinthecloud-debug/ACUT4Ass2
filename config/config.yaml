@@ -1,0 +1,4 @@
+data:
+ raw_path: data/synthetic_clinical_dataset.csv
+ target: readmission_30d
+ id_column: patient_id
