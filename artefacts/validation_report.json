@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "mode": "training",
+  "n_rows": 10000,
+  "errors": [],
+  "warnings": [
+    "unexpected columns (not used as features): ['mortality']",
+    "age: 204 values outside [18, 110]",
+    "diagnosis: unexpected categories ['stroke']",
+    "39 rows have mortality=1 AND readmission=1 - label definitions need checking with the data owner"
+  ],
+  "n_bad_rows": 204
+}

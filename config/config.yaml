@@ -5,8 +5,10 @@ data:
  
 schema:
   numeric:
-    # Scope decision: the model is for ADULTS. The data has patients aged 0-17,
-    # Age 0 also appears to be 
+    # SCOPE DECISION: model is for adults. 204 patients aged 0-17 are flagged,
+    # Age 0 also appears to be <1 years of age.
+    # SCOPE DECISION: model is for adults. 204 patients aged 0-17 are flagged,
+    # excluded from training, and marked "review manually" at prediction time.
     # Ages 90+ appear to be top-coded at 90 (a privacy practice), so 90 means "90 or older".
     # Appropriate values for this section was taken from AI as I dont know the key ranges, in practice this would be via consultation with the Medical staff".
     age:          {min: 18,  max: 110}
