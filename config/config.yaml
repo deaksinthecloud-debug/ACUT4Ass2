@@ -2,3 +2,21 @@ data:
  raw_path: data/synthetic_clinical_dataset.csv
  target: readmission_30d
  id_column: patient_id
+ 
+schema:
+  numeric:
+    # Scope decision: the model is for ADULTS. The data has patients aged 0-17,
+    # Age 0 also appears to be 
+    # Ages 90+ appear to be top-coded at 90 (a privacy practice), so 90 means "90 or older".
+    # Appropriate values for this section was taken from AI as I dont know the key ranges, in practice this would be via consultation with the Medical staff".
+    age:          {min: 18,  max: 110}
+    bmi:          {min: 10,  max: 70}     # below 10 or above 70 is not physically plausible
+    systolic_bp:  {min: 60,  max: 250}    # mmHg; outside this is not survivable or a typo
+    diastolic_bp: {min: 30,  max: 150}    # mmHg
+    glucose:      {min: 30,  max: 600}    # mg/dL; wide on purpose, since very sick patients exist
+    cholesterol:  {min: 50,  max: 500}    # mg/dL
+    creatinine:   {min: 0.1, max: 15}     # mg/dL; high values = kidney failure, still real
+  binary: [diabetes, hypertension]
+  categorical:
+    sex: [Female, Male, Other]
+    diagnosis: [Normal, Pneumonia, Heart Failure, Sepsis]
