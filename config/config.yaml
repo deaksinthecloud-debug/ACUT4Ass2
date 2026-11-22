@@ -22,3 +22,9 @@ schema:
   categorical:
     sex: [Female, Male, Other]
     diagnosis: [Normal, Pneumonia, Heart Failure, Sepsis]
+    
+    # Excluded columns
+excluded_columns:
+  patient_id: "identifier with no clinical meaning - the model could memorise individual rows"
+  mortality: "outcome recorded after discharge - not available at prediction time (future information)"
+  readmission_30d: "the target - using it as an input would be direct leakage"
