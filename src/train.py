@@ -183,6 +183,11 @@ def main():
     print(f"\nFlagged {flagged} patients; random selection would reach ~{expected_random:.0f} "
           f"readmissions, the model reached {t['tp']} (lift {lift:.2f}x, "
           f"{(lift - 1):.0%} more for the same workload)")
+              # 9c. Approval gate - does the model beat the baseline by enough to be used?
+    required_gain = cfg["approval"]["min_auc_gain_over_baseline"]
+    approved = gain >= required_gain
+    print(f"\nApproval gate: gain {gain:+.3f} vs required {required_gain:+.3f} -> "
+          f"{'APPROVED' if approved else 'NOT APPROVED'}")
     # 10. Save a full record of this run (Task 5.1)
     record = {
         "run_id": run_id,
@@ -202,6 +207,7 @@ def main():
         "results": results,
         "selected_model": best,
         "auc_gain_over_baseline_test": round(gain, 3),
+                "approved": bool(approved),
         "subgroups_test": subgroups,
     }
     with open(run_dir / "run.json", "w") as f:
@@ -225,5 +231,25 @@ def main():
     with open("artefacts/runs_log.jsonl", "a") as f:
         f.write(json.dumps(log_line) + "\n")
     print("Run log updated: artefacts/runs_log.jsonl")
+        # 13. Promote the model ONLY if it passed the approval gate
+    if approved:
+        Path("models").mkdir(exist_ok=True)
+        joblib.dump(fitted[best], "models/model.joblib")
+        model_card = {
+            "run_id": run_id,
+            "model": best,
+            "approved_on": run_id,
+            "git_commit": record["git_commit"],
+            "dataset_sha256": record["dataset_sha256"],
+            "decision_threshold": threshold,
+            "test_metrics": results[best]["test"],
+            "auc_gain_over_baseline": round(gain, 3),
+            "approval_rule": f"test ROC-AUC gain over baseline >= {required_gain}",
+        }
+        with open("models/model_card.json", "w") as f:
+            json.dump(model_card, f, indent=2)
+        print("Model PROMOTED -> models/model.joblib (see models/model_card.json)")
+    else:
+        print(f"Model NOT promoted - kept in {run_dir} for reference only")
 if __name__ == "__main__":
     main()
