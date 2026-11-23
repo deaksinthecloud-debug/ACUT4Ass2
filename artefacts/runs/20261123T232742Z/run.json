@@ -1,0 +1,252 @@
+{
+  "run_id": "20261123T232742Z",
+  "git_commit": "1c7b610",
+  "dataset_path": "data/synthetic_clinical_dataset.csv",
+  "dataset_sha256": "bee99ea6e73b263a19402172cd61dc012089e1dccdd2ba13c43d12722e7a988b",
+  "rows_removed_by_validation": 204,
+  "n_train": 6268,
+  "n_validation": 1568,
+  "n_test": 1960,
+  "config": {
+    "data": {
+      "raw_path": "data/synthetic_clinical_dataset.csv",
+      "target": "readmission_30d",
+      "id_column": "patient_id"
+    },
+    "schema": {
+      "numeric": {
+        "age": {
+          "min": 18,
+          "max": 110
+        },
+        "bmi": {
+          "min": 10,
+          "max": 70
+        },
+        "systolic_bp": {
+          "min": 60,
+          "max": 250
+        },
+        "diastolic_bp": {
+          "min": 30,
+          "max": 150
+        },
+        "glucose": {
+          "min": 30,
+          "max": 600
+        },
+        "cholesterol": {
+          "min": 50,
+          "max": 500
+        },
+        "creatinine": {
+          "min": 0.1,
+          "max": 15
+        }
+      },
+      "binary": [
+        "diabetes",
+        "hypertension"
+      ],
+      "categorical": {
+        "sex": [
+          "Female",
+          "Male",
+          "Other"
+        ],
+        "diagnosis": [
+          "Normal",
+          "Pneumonia",
+          "Heart Failure",
+          "Sepsis"
+        ]
+      }
+    },
+    "excluded_columns": {
+      "patient_id": "identifier not useful predictor",
+      "mortality": "outcome recorded after discharge, this rasies an issue, what if the patient dies in hospital as the definition of mortaility isnt confirmed.",
+      "readmission_30d": "the target - using it as an input would be direct leakage"
+    },
+    "random_seed": 42,
+    "split": {
+      "test_size": 0.2,
+      "validation_size": 0.2
+    },
+    "selection_metric": "roc_auc",
+    "decision_threshold": 0.5,
+    "models": {
+      "logistic_regression": {
+        "C": 1.0,
+        "class_weight": "balanced",
+        "max_iter": 1000
+      },
+      "random_forest": {
+        "n_estimators": 300,
+        "max_depth": 6,
+        "min_samples_leaf": 20,
+        "class_weight": "balanced"
+      }
+    },
+    "threshold_experiment": [
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7
+    ],
+    "approval": {
+      "min_auc_gain_over_baseline": 0.05
+    }
+  },
+  "environment": {
+    "python": "3.13.17",
+    "scikit-learn": "1.8.0",
+    "pandas": "2.2.3",
+    "numpy": "2.3.5"
+  },
+  "validation_warnings": [
+    "unexpected columns (not used as features): ['mortality']",
+    "age: 204 values outside [18, 110]",
+    "39 rows have mortality=1 AND readmission=1 - label definitions need checking with the data owner"
+  ],
+  "results": {
+    "baseline_dummy": {
+      "validation": {
+        "roc_auc": 0.5,
+        "recall": 0.0,
+        "precision": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 219,
+        "tn": 1349
+      },
+      "test": {
+        "roc_auc": 0.5,
+        "recall": 0.0,
+        "precision": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 274,
+        "tn": 1686
+      }
+    },
+    "logistic_regression": {
+      "validation": {
+        "roc_auc": 0.585,
+        "recall": 0.525,
+        "precision": 0.197,
+        "tp": 115,
+        "fp": 469,
+        "fn": 104,
+        "tn": 880
+      }
+    },
+    "random_forest": {
+      "validation": {
+        "roc_auc": 0.59,
+        "recall": 0.525,
+        "precision": 0.198,
+        "tp": 115,
+        "fp": 466,
+        "fn": 104,
+        "tn": 883
+      },
+      "test": {
+        "roc_auc": 0.62,
+        "recall": 0.599,
+        "precision": 0.211,
+        "tp": 164,
+        "fp": 612,
+        "fn": 110,
+        "tn": 1074,
+        "lift": 1.51
+      }
+    }
+  },
+  "selected_model": "random_forest",
+  "auc_gain_over_baseline_test": 0.12,
+  "approved": true,
+  "subgroups_test": {
+    "sex": {
+      "Female": {
+        "n": 1017,
+        "readmitted": 144,
+        "roc_auc": 0.615,
+        "recall": 0.576,
+        "precision": 0.21,
+        "tp": 83,
+        "fp": 312,
+        "fn": 61,
+        "tn": 561
+      },
+      "Male": {
+        "n": 911,
+        "readmitted": 128,
+        "roc_auc": 0.624,
+        "recall": 0.617,
+        "precision": 0.215,
+        "tp": 79,
+        "fp": 289,
+        "fn": 49,
+        "tn": 494
+      },
+      "Other": {
+        "n": 32,
+        "readmitted": 2,
+        "roc_auc": 0.683,
+        "recall": 1.0,
+        "precision": 0.154,
+        "tp": 2,
+        "fp": 11,
+        "fn": 0,
+        "tn": 19
+      }
+    },
+    "diagnosis": {
+      "Heart Failure": {
+        "n": 352,
+        "readmitted": 51,
+        "roc_auc": 0.639,
+        "recall": 0.627,
+        "precision": 0.242,
+        "tp": 32,
+        "fp": 100,
+        "fn": 19,
+        "tn": 201
+      },
+      "Normal": {
+        "n": 1104,
+        "readmitted": 151,
+        "roc_auc": 0.609,
+        "recall": 0.576,
+        "precision": 0.195,
+        "tp": 87,
+        "fp": 359,
+        "fn": 64,
+        "tn": 594
+      },
+      "Pneumonia": {
+        "n": 386,
+        "readmitted": 60,
+        "roc_auc": 0.618,
+        "recall": 0.617,
+        "precision": 0.24,
+        "tp": 37,
+        "fp": 117,
+        "fn": 23,
+        "tn": 209
+      },
+      "Sepsis": {
+        "n": 118,
+        "readmitted": 12,
+        "roc_auc": 0.682,
+        "recall": 0.667,
+        "precision": 0.182,
+        "tp": 8,
+        "fp": 36,
+        "fn": 4,
+        "tn": 70
+      }
+    }
+  }
+}

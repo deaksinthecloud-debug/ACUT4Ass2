@@ -49,3 +49,7 @@ models:
     class_weight: balanced
 
 threshold_experiment: [0.3, 0.4, 0.5, 0.6, 0.7]
+
+# Approval gate: a model is only promoted for use if it beats the baseline by this margin
+approval:
+  min_auc_gain_over_baseline: 0.05

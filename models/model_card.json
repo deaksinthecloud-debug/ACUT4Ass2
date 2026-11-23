@@ -1,0 +1,20 @@
+{
+  "run_id": "20261123T233640Z",
+  "model": "random_forest",
+  "approved_on": "20261123T233640Z",
+  "git_commit": "1c7b610",
+  "dataset_sha256": "bee99ea6e73b263a19402172cd61dc012089e1dccdd2ba13c43d12722e7a988b",
+  "decision_threshold": 0.5,
+  "test_metrics": {
+    "roc_auc": 0.62,
+    "recall": 0.599,
+    "precision": 0.211,
+    "tp": 164,
+    "fp": 612,
+    "fn": 110,
+    "tn": 1074,
+    "lift": 1.51
+  },
+  "auc_gain_over_baseline": 0.12,
+  "approval_rule": "test ROC-AUC gain over baseline >= 0.05"
+}
