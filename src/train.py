@@ -1,14 +1,32 @@
 """Training: load, validate, prepare, split, train, evaluate and save models."""
+import json
+import platform
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import sklearn
 from sklearn.dummy import DummyClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
 from src.features import RAW_INPUTS, build_preprocessor
-from src.ingest import load_config, load_raw
+from src.ingest import file_sha256, load_config, load_raw
 from src.validate import validate
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
+
+def git_commit():
+    """Return the current Git commit hash, i.e. which version of the code ran."""
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL
+        ).decode().strip()
+    except Exception:
+        return "unknown"
 
 def evaluate(pipe, X, y, threshold=0.5):
     """Score a fitted pipeline on X, y. Returns a dictionary of metrics."""
@@ -39,7 +57,13 @@ def subgroup_metrics(pipe, X, y, column, threshold=0.5):
         out[group] = {"n": n, "readmitted": n_readmitted} | evaluate(pipe, X[mask], y[mask], threshold)
     return out
 def main():
-    # 1. Load the settings and the raw data
+    # 0. A unique ID and folder for this run
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_dir = Path("artefacts/runs") / run_id
+    run_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Run ID: {run_id}")   
+
+   # 1. Load the settings and the raw data
     cfg = load_config()
     target = cfg["data"]["target"]
     df = load_raw(cfg["data"]["raw_path"])
@@ -158,6 +182,29 @@ def main():
     print(f"\nFlagged {flagged} patients; random selection would reach ~{expected_random:.0f} "
           f"readmissions, the model reached {t['tp']} (lift {lift:.2f}x, "
           f"{(lift - 1):.0%} more for the same workload)")
-
+    # 10. Save a full record of this run (Task 5.1)
+    record = {
+        "run_id": run_id,
+        "git_commit": git_commit(),
+        "dataset_path": cfg["data"]["raw_path"],
+        "dataset_sha256": file_sha256(cfg["data"]["raw_path"]),
+        "rows_removed_by_validation": len(report["bad_rows"]),
+        "n_train": len(X_train), "n_validation": len(X_val), "n_test": len(X_test),
+        "config": cfg,
+        "environment": {
+            "python": platform.python_version(),
+            "scikit-learn": sklearn.__version__,
+            "pandas": pd.__version__,
+            "numpy": np.__version__,
+        },
+        "validation_warnings": report["warnings"],
+        "results": results,
+        "selected_model": best,
+        "auc_gain_over_baseline_test": round(gain, 3),
+        "subgroups_test": subgroups,
+    }
+    with open(run_dir / "run.json", "w") as f:
+        json.dump(record, f, indent=2, default=str)
+    print(f"\nRun record saved: {run_dir / 'run.json'}")
 if __name__ == "__main__":
     main()
