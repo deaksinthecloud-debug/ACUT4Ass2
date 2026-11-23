@@ -70,7 +70,7 @@ def main():
     for name, ys in [("train", y_train), ("validation", y_val), ("test", y_test)]:
         print(f"{name:10s} {len(ys):5,} patients   readmission rate {ys.mean():.1%}")
 
-    # 6. Train the baseline and the candidates, all with the SAME preprocessing
+        # 6. Train the baseline and the candidates, all with the SAME preprocessing
     threshold = cfg["decision_threshold"]
     m = cfg["models"]
     models = {
@@ -94,6 +94,33 @@ def main():
         v = results[name]["validation"]
         print(f"{name:20s} ROC-AUC {v['roc_auc']:.3f}   recall {v['recall']:.2f}   "
               f"precision {v['precision']:.2f}   flagged {v['tp'] + v['fp']:4d}")
+
+    # 7. Choose the best candidate on VALIDATION (never on test)
+    metric = cfg["selection_metric"]                       # "roc_auc"
+    candidates = {k: v for k, v in results.items() if k != "baseline_dummy"}
+    best = max(candidates, key=lambda k: candidates[k]["validation"][metric])
+    print(f"\nSelected model (best validation {metric}): {best}")
+        # 7b. Threshold experiment on VALIDATION (Task 4.8)
+    print(f"\nThreshold experiment - {best} on validation")
+    print(f"{'threshold':>9s} {'flagged':>8s} {'tp':>5s} {'fp':>5s} {'fn':>5s} {'recall':>7s} {'precision':>9s}")
+    for thr in cfg["threshold_experiment"]:
+        r = evaluate(fitted[best], X_val, y_val, thr)
+        print(f"{thr:9.1f} {r['tp'] + r['fp']:8d} {r['tp']:5d} {r['fp']:5d} {r['fn']:5d} "
+              f"{r['recall']:7.2f} {r['precision']:9.2f}")
+
+    # 8. Final check on TEST - touched once, for the chosen model and the baseline
+    for name in ["baseline_dummy", best]:
+        results[name]["test"] = evaluate(fitted[name], X_test, y_test, threshold)
+
+    print("\nTEST results")
+    for name in ["baseline_dummy", best]:
+        t = results[name]["test"]
+        print(f"{name:20s} ROC-AUC {t['roc_auc']:.3f}   recall {t['recall']:.2f}   "
+              f"precision {t['precision']:.2f}   tp {t['tp']}  fp {t['fp']}  fn {t['fn']}")
+
+    gain = results[best]["test"]["roc_auc"] - results["baseline_dummy"]["test"]["roc_auc"]
+    print(f"\nROC-AUC gain over baseline on test: {gain:+.3f}")
+
 
 if __name__ == "__main__":
     main()
