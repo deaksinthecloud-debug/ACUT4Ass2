@@ -7,8 +7,7 @@ schema:
   numeric:
     # SCOPE DECISION: model is for adults. 204 patients aged 0-17 are flagged,
     # Age 0 also appears to be <1 years of age.
-    # SCOPE DECISION: model is for adults. 204 patients aged 0-17 are flagged,
-    # excluded from training, and marked "review manually" at prediction time.
+      # excluded from training, and marked "review manually" at prediction time.
     # Ages 90+ appear to be top-coded at 90 (a privacy practice), so 90 means "90 or older".
     # Appropriate values for this section was taken from AI as I dont know the key ranges, in practice this would be via consultation with the Medical staff".
     age:          {min: 18,  max: 110}
@@ -25,6 +24,15 @@ schema:
     
     # Excluded columns
 excluded_columns:
-  patient_id: "identifier with no clinical meaning - the model could memorise individual rows"
-  mortality: "outcome recorded after discharge - not available at prediction time (future information)"
+  patient_id: "identifier not useful predictor"
+  mortality: "outcome recorded after discharge, this rasies an issue, what if the patient dies in hospital as the definition of mortaility isnt confirmed."
   readmission_30d: "the target - using it as an input would be direct leakage"
+  
+random_seed: 42
+
+split:
+  test_size: 0.20         # 20% held back for the final, one-time check
+  validation_size: 0.20   # 20% of what's left, for choosing between models
+  
+selection_metric: roc_auc
+decision_threshold: 0.5
