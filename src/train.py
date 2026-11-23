@@ -23,7 +23,21 @@ def evaluate(pipe, X, y, threshold=0.5):
         "precision": round(precision_score(y, flagged, zero_division=0), 3),  # share of flags that were right
         "tp": int(tp), "fp": int(fp), "fn": int(fn), "tn": int(tn),
     }
+def subgroup_metrics(pipe, X, y, column, threshold=0.5):
+    """Evaluate the model separately for each group in one column (e.g. each sex)."""
+    out = {}
+    for group in sorted(X[column].unique()):
+        mask = X[column] == group                    # True for patients in this group
+        n = int(mask.sum())
+        n_readmitted = int(y[mask].sum())
 
+        if y[mask].nunique() < 2:                     # only one outcome present -> AUC impossible
+            out[group] = {"n": n, "readmitted": n_readmitted,
+                          "note": "only one outcome class present - cannot evaluate"}
+            continue
+
+        out[group] = {"n": n, "readmitted": n_readmitted} | evaluate(pipe, X[mask], y[mask], threshold)
+    return out
 def main():
     # 1. Load the settings and the raw data
     cfg = load_config()
@@ -120,7 +134,30 @@ def main():
 
     gain = results[best]["test"]["roc_auc"] - results["baseline_dummy"]["test"]["roc_auc"]
     print(f"\nROC-AUC gain over baseline on test: {gain:+.3f}")
+    # 9. Subgroup check on TEST - does the model work equally well for everyone?
+    subgroups = {}
+    for col in ["sex", "diagnosis"]:
+        subgroups[col] = subgroup_metrics(fitted[best], X_test, y_test, col, threshold)
 
+        print(f"\nSubgroups by {col} ({best}, test set)")
+        print(f"{'group':15s} {'n':>5s} {'readm':>6s} {'ROC-AUC':>8s} {'recall':>7s} {'precision':>9s}")
+        for group, r in subgroups[col].items():
+            if "note" in r:
+                print(f"{group:15s} {r['n']:5d} {r['readmitted']:6d}   {r['note']}")
+            else:
+                print(f"{group:15s} {r['n']:5d} {r['readmitted']:6d} {r['roc_auc']:8.3f} "
+                      f"{r['recall']:7.2f} {r['precision']:9.2f}")
+                          # 8b. Lift: how much better than picking the same number of patients at random?
+    t = results[best]["test"]
+    flagged = t["tp"] + t["fp"]
+    base_rate = y_test.mean()
+    expected_random = flagged * base_rate
+    lift = t["precision"] / base_rate
+    results[best]["test"]["lift"] = round(lift, 2)
+
+    print(f"\nFlagged {flagged} patients; random selection would reach ~{expected_random:.0f} "
+          f"readmissions, the model reached {t['tp']} (lift {lift:.2f}x, "
+          f"{(lift - 1):.0%} more for the same workload)")
 
 if __name__ == "__main__":
     main()
