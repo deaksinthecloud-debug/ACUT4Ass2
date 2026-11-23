@@ -36,3 +36,14 @@ split:
   
 selection_metric: roc_auc
 decision_threshold: 0.5
+
+models:
+  logistic_regression:
+    C: 1.0                    # regularisation strength (1.0 = scikit-learn default)
+    class_weight: balanced    # pay more attention to the rarer readmitted patients
+    max_iter: 1000            # give the solver enough steps to finish
+  random_forest:
+    n_estimators: 300         # number of trees
+    max_depth: 6              # how deep each tree can grow (limits overfitting)
+    min_samples_leaf: 20      # each final group must contain at least 20 patients
+    class_weight: balanced

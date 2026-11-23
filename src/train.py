@@ -7,6 +7,8 @@ from sklearn.pipeline import Pipeline
 from src.features import RAW_INPUTS, build_preprocessor
 from src.ingest import load_config, load_raw
 from src.validate import validate
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 
 def evaluate(pipe, X, y, threshold=0.5):
     """Score a fitted pipeline on X, y. Returns a dictionary of metrics."""
@@ -68,15 +70,30 @@ def main():
     for name, ys in [("train", y_train), ("validation", y_val), ("test", y_test)]:
         print(f"{name:10s} {len(ys):5,} patients   readmission rate {ys.mean():.1%}")
 
-    # 6. Baseline: a "do nothing smart" model to beat
+    # 6. Train the baseline and the candidates, all with the SAME preprocessing
     threshold = cfg["decision_threshold"]
-    baseline = Pipeline([
-        ("preprocess", build_preprocessor()),
-        ("model", DummyClassifier(strategy="prior")),
-    ])
-    baseline.fit(X_train, y_train)                       # learns from TRAIN only
-    baseline_val = evaluate(baseline, X_val, y_val, threshold)
-    print("\nBaseline (validation):", baseline_val)
+    m = cfg["models"]
+    models = {
+        "baseline_dummy": DummyClassifier(strategy="prior"),
+        "logistic_regression": LogisticRegression(**m["logistic_regression"], random_state=seed),
+        "random_forest": RandomForestClassifier(**m["random_forest"], random_state=seed, n_jobs=-1),
+    }
+
+    results = {}     # metrics for each model
+    fitted = {}      # the trained pipelines, kept for Task 4.7
+    print()
+    for name, model in models.items():
+        pipe = Pipeline([
+            ("preprocess", build_preprocessor()),
+            ("model", model),
+        ])
+        pipe.fit(X_train, y_train)                         # learn from TRAIN only
+        results[name] = {"validation": evaluate(pipe, X_val, y_val, threshold)}
+        fitted[name] = pipe
+
+        v = results[name]["validation"]
+        print(f"{name:20s} ROC-AUC {v['roc_auc']:.3f}   recall {v['recall']:.2f}   "
+              f"precision {v['precision']:.2f}   flagged {v['tp'] + v['fp']:4d}")
 
 if __name__ == "__main__":
     main()
