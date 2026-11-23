@@ -2,6 +2,7 @@
 import json
 import platform
 import subprocess
+import joblib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -206,5 +207,23 @@ def main():
     with open(run_dir / "run.json", "w") as f:
         json.dump(record, f, indent=2, default=str)
     print(f"\nRun record saved: {run_dir / 'run.json'}")
+        # 11. Save the trained model (preprocessing + model together) with its run record
+    joblib.dump(fitted[best], run_dir / "model.joblib")
+    print(f"Model saved: {run_dir / 'model.joblib'}")
+
+    # 12. Append a one-line summary to the run log, for comparing runs
+    log_line = {
+        "run_id": run_id,
+        "git_commit": record["git_commit"],
+        "data": record["dataset_sha256"][:12],
+        "model": best,
+        "val_roc_auc": results[best]["validation"]["roc_auc"],
+        "test_roc_auc": results[best]["test"]["roc_auc"],
+        "test_recall": results[best]["test"]["recall"],
+        "test_precision": results[best]["test"]["precision"],
+    }
+    with open("artefacts/runs_log.jsonl", "a") as f:
+        f.write(json.dumps(log_line) + "\n")
+    print("Run log updated: artefacts/runs_log.jsonl")
 if __name__ == "__main__":
     main()
