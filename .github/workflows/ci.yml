@@ -28,4 +28,5 @@ jobs:
       - name: Validate the raw data
         run: python -m src.validate
 
-      - name:
+      - name: Train, evaluate and apply the approval gate (smoke test)
+        run: python -m src.train
