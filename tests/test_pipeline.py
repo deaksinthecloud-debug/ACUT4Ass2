@@ -97,3 +97,34 @@ def test_unseen_category_does_not_crash():
     new = sample(3)[RAW_INPUTS].copy()
     new.loc[0, "diagnosis"] = "Stroke"
     assert pre.transform(new).shape[0] == 3
+    
+    
+    # ---------- Train-serve consistency
+
+def test_same_input_gives_same_output():
+    """The fitted preprocessing is deterministic: same rows in, same numbers out."""
+    df = sample()
+    pre = build_preprocessor().fit(df[RAW_INPUTS])
+    first = pre.transform(df[RAW_INPUTS])
+    second = pre.transform(df[RAW_INPUTS].copy())
+    assert np.allclose(first, second)
+
+
+def test_saved_model_predicts_exactly_like_trained_model(tmp_path):
+    """Saving and reloading the pipeline (as predict.py does) changes nothing."""
+    import joblib
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.pipeline import Pipeline
+
+    df = sample(200)
+    pipe = Pipeline([
+        ("preprocess", build_preprocessor()),
+        ("model", LogisticRegression(max_iter=1000)),
+    ]).fit(df[RAW_INPUTS], df["readmission_30d"])
+
+    path = tmp_path / "model.joblib"
+    joblib.dump(pipe, path)
+    reloaded = joblib.load(path)
+
+    new = sample(20, seed=99)[RAW_INPUTS]
+    assert np.array_equal(pipe.predict_proba(new), reloaded.predict_proba(new))

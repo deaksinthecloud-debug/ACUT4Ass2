@@ -1,0 +1,21 @@
+patient_id,readmission_risk,flag_for_review,input_check
+10954,0.55,1,out of range - review manually
+4851,0.342,0,ok
+5963,0.419,0,ok
+4887,0.376,1,out of range - review manually
+6438,0.402,0,ok
+9518,0.568,1,ok
+3042,0.582,1,ok
+2990,0.572,1,ok
+2934,0.41,0,ok
+10985,0.419,0,ok
+9419,0.508,1,ok
+3419,0.409,0,ok
+7812,0.385,0,ok
+2218,0.374,0,ok
+7979,0.44,0,ok
+7112,0.612,1,ok
+8866,0.553,1,ok
+8782,0.616,1,ok
+8776,0.384,0,ok
+8040,0.545,1,ok
