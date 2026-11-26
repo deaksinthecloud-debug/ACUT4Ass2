@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="zg19gi5Ui802wNg8flBe">
+    <mxGraphModel dx="1714" dy="1051" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-7" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Raw Data&lt;/b&gt;&lt;div&gt;synthetic_clinical_dataset.csv 10,000 rows&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-9" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Ingestion src/ingest.py&lt;br&gt;&lt;/b&gt;&lt;div&gt;Load from config: SHA 256 hash = version&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-11" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Validation gate src/validate.py&lt;/b&gt;&lt;br&gt;&lt;div&gt;Schema, ranges, catagories, duplicates&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-13" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-12" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Features and pre processing&lt;/b&gt;&lt;div&gt;5 Clincal features, one pipeline&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-15" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Training src/train.py&lt;/b&gt;&lt;br&gt;&lt;div&gt;Baseline, 2 models, Logistical regression, random forest&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-17" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-16" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Evaluaton and benchmarking&lt;/b&gt;&lt;br&gt;&lt;div&gt;Select on validation, test once, subgroups&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-19" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-18" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Run tracking&lt;/b&gt;&lt;br&gt;&lt;div&gt;run.json, commit, data hash, config, versions&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-25" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-24" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-29" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Approval gate&lt;/b&gt;&lt;br&gt;&lt;div&gt;Test AUC must beat baseline by 0.05&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="90" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Not approved&lt;/b&gt;&lt;br&gt;&lt;div&gt;Kept for record keeping in run folder&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="380" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-27" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-26" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Approved Model&lt;/b&gt;&lt;br&gt;&lt;div&gt;Model/model.joblib and model card&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="380" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-34" edge="1" parent="1" source="JcHEpxxUg-kkBPMpHYmP-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="JcHEpxxUg-kkBPMpHYmP-33" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Batch Prediction&lt;/b&gt;&lt;br&gt;&lt;div&gt;Validate, score, flag bad rows to a person&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="380" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-31" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;" value="Yes" vertex="1">
+          <mxGeometry height="30" width="60" x="330" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-32" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Helvetica;fontSize=12;fontColor=default;" value="No" vertex="1">
+          <mxGeometry height="30" width="60" x="320" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="JcHEpxxUg-kkBPMpHYmP-33" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Monitoring (future)&lt;/b&gt;&lt;br&gt;&lt;div&gt;Drift, flag rate, 30 day outcomes, retraining triggers, and re-approval&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="380" y="1020" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

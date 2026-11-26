@@ -128,3 +128,13 @@ def test_saved_model_predicts_exactly_like_trained_model(tmp_path):
 
     new = sample(20, seed=99)[RAW_INPUTS]
     assert np.array_equal(pipe.predict_proba(new), reloaded.predict_proba(new))
+    
+    assert np.array_equal(pipe.predict_proba(new), reloaded.predict_proba(new))
+
+
+def test_glucose_flag_boundary():
+    """Values either side of the 126 mg/dL threshold are classified correctly."""
+    df = sample(3)
+    df["glucose"] = [125.9, 126.0, 126.1]
+    X = ClinicalFeatures().transform(df)
+    assert list(X["high_glucose"]) == [0, 1, 1]

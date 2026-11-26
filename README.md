@@ -19,7 +19,7 @@ jupyter_notebooks/        notebooks for data experimentation
 .github/workflows/ci.yml  GitHub Actions: tests, validation and training on every push
 artefacts/                validation reports and run records
 models/                   Created by the approval gate: the approved model + model card
-```
+architecture			  Architecture diagrams
 
 ## Set-up
 
